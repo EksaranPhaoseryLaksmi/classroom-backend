@@ -5,7 +5,7 @@ namespace App\Models;
 class Classroom
 {
     // Fake database
-    protected static $data = [
+    static $data = [
         'students' => [
             ['name' => 'John Doe', 'age' => 20 , 'id' => 1],
             ['name' => 'Jane Smith', 'age' => 22, 'id' => 2],
@@ -28,15 +28,81 @@ class Classroom
         return self::$data['teachers'];
     }
 
-    // get student by id
+    public static function getStudentById($id)
+    {
+        foreach (self::$data['students'] as $student) {
+            if ($student['id'] == $id) return $student;
+        }
+        return null;
+    }
 
-    // delete student by id
+    public static function deleteStudentById($id)
+    {
+        foreach (self::$data['students'] as $index => $student) {
+            if ($student['id'] == $id) {
+                unset(self::$data['students'][$index]);
+                self::$data['students'] = array_values(self::$data['students']);
+                return true;
+            }
+        }
+        return false;
+    }
 
-    // create student
+    public static function createStudent($student)
+{
+    foreach (self::$data['students'] as $existing) {
+        if ($existing['id'] == $student['id']) return false; // Conflict ID
+    }
+    
+    // Add new student to the array
+    self::$data['students'][] = $student;
 
-    // create teacher
+    // Debugging: log the updated students list
+    \Log::info('Updated students list:', self::$data['students']);
+    
+    return true;
+}
 
-    // edit student by id
+    public static function editStudentById($id, $newData)
+    {
+        foreach (self::$data['students'] as &$student) {
+            if ($student['id'] == $id) {
+                $student = array_merge($student, $newData);
+                return $student;
+            }
+        }
+        return null;
+    }
 
-    // edit teacher by id
+    public static function createTeacher($teacher)
+    {
+        foreach (self::$data['teachers'] as $existing) {
+            if ($existing['id'] == $teacher['id']) return false; // Conflict ID
+        }
+        self::$data['teachers'][] = $teacher;
+        return true;
+    }
+
+    public static function deleteTeacherById($id)
+    {
+        foreach (self::$data['teachers'] as $index => $teacher) {
+            if ($teacher['id'] == $id) {
+                unset(self::$data['teachers'][$index]);
+                self::$data['teachers'] = array_values(self::$data['teachers']);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function editTeacherById($id, $newData)
+    {
+        foreach (self::$data['teachers'] as &$teacher) {
+            if ($teacher['id'] == $id) {
+                $teacher = array_merge($teacher, $newData);
+                return $teacher;
+            }
+        }
+        return null;
+    }
 }
