@@ -20,38 +20,19 @@ Route::get('/students/{id}', function($id) {
 
 // Create a new student
 Route::post('/students', function() {
-    // Get the request data
-    $body = request()->all();
-    
-    // Debugging: check the data we're receiving
-    \Log::info('Received student data:', $body);
+     $body = request()->all();
 
-    // Generate a new unique ID for the student
-    $students = Classroom::getStudents();
-    $lastStudent = end($students);
-    $newId = $lastStudent ? $lastStudent['id'] + 1 : 1;
-
-    $newStudent = [
-        'name' => $body['name'],
-        'age' => $body['age'],
-        'id' => $newId
-    ];
-
-    // Debugging: check the new student data
-    \Log::info('Created student data:', $newStudent);
-
-    // Call the model to add the student
-    $created = Classroom::createStudent($newStudent);
-
-    if ($created) {
-        // Debugging: success message
-        \Log::info('Student successfully added.');
-        return response()->json(['message' => 'Student created', 'data' => $newStudent]);
+    if (empty($body['name']) || empty($body['age'])) {
+        return response()->json(['message' => 'Name and age required'], 400);
     }
 
-    // Debugging: failure message
-    \Log::info('Failed to create student, ID conflict');
-    return response()->json(['message' => 'Failed to create student, ID conflict'], 400);
+    $created = Classroom::createStudent($body);
+
+    if ($created) {
+        return response()->json(['message' => 'Student created', 'data' => $created]);
+    }
+
+    return response()->json(['message' => 'Failed to create student'], 500);
 });
 
 // Edit an existing student by ID
@@ -94,26 +75,19 @@ Route::get('/teachers/{id}', function($id) {
 
 // Create a new teacher
 Route::post('/teachers', function() {
-    $body = request()->all();
+   $body = request()->all();
 
-    // Generate a new unique ID for the teacher
-    $teachers = Classroom::getTeachers();
-    $lastTeacher = end($teachers);
-    $newId = $lastTeacher ? $lastTeacher['id'] + 1 : 1;
-
-    $newTeacher = [
-        'name' => $body['name'],
-        'subject' => $body['subject'],
-        'id' => $newId
-    ];
-
-    $created = Classroom::createTeacher($newTeacher);
-
-    if ($created) {
-        return response()->json(['message' => 'Teacher created', 'data' => $newTeacher]);
+    if (empty($body['name']) || empty($body['subject'])) {
+        return response()->json(['message' => 'Name and subject required'], 400);
     }
 
-    return response()->json(['message' => 'Failed to create teacher, ID conflict'], 400);
+    $created = Classroom::createTeacher($body);
+
+    if ($created) {
+        return response()->json(['message' => 'Student created', 'data' => $created]);
+    }
+
+    return response()->json(['message' => 'Failed to create student'], 500);
 });
 
 // Edit an existing teacher by ID
