@@ -2,15 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Classroom;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+
+// Student & Teacher resource routes (for web views)
+Route::resource('students', StudentController::class);
+Route::resource('teachers', TeacherController::class);
 
 // Get all students
-Route::get('/students', function() {
+Route::get('/api/students', function() {
     $students = Classroom::getStudents();
     return response()->json($students);
 });
 
 // Get a specific student by ID
-Route::get('/students/{id}', function($id) {
+Route::get('/api/students/{id}', function($id) {
     $student = Classroom::getStudentById($id);
     if ($student) {
         return response()->json($student);
@@ -19,7 +25,7 @@ Route::get('/students/{id}', function($id) {
 });
 
 // Create a new student
-Route::post('/students', function() {
+Route::post('/api/students', function() {
      $body = request()->all();
 
     if (empty($body['name']) || empty($body['age'])) {
@@ -36,7 +42,7 @@ Route::post('/students', function() {
 });
 
 // Edit an existing student by ID
-Route::patch('/students/{id}', function($id) {
+Route::patch('/api/students/{id}', function($id) {
     $body = request()->all();
     $updatedStudent = Classroom::editStudentById($id, $body);
 
@@ -48,7 +54,7 @@ Route::patch('/students/{id}', function($id) {
 });
 
 // Delete an existing student by ID
-Route::delete('/students/{id}', function($id) {
+Route::delete('/api/students/{id}', function($id) {
     $deleted = Classroom::deleteStudentById($id);
 
     if ($deleted) {
@@ -59,13 +65,13 @@ Route::delete('/students/{id}', function($id) {
 });
 
 // Get all teachers
-Route::get('/teachers', function() {
+Route::get('/api/teachers', function() {
     $teachers = Classroom::getTeachers();
     return response()->json($teachers);
 });
 
 // Get a specific teacher by ID
-Route::get('/teachers/{id}', function($id) {
+Route::get('/api/teachers/{id}', function($id) {
     $teacher = Classroom::getTeacherById($id);
     if ($teacher) {
         return response()->json($teacher);
@@ -74,7 +80,7 @@ Route::get('/teachers/{id}', function($id) {
 });
 
 // Create a new teacher
-Route::post('/teachers', function() {
+Route::post('/api/teachers', function() {
    $body = request()->all();
 
     if (empty($body['name']) || empty($body['subject'])) {
@@ -91,7 +97,7 @@ Route::post('/teachers', function() {
 });
 
 // Edit an existing teacher by ID
-Route::patch('/teachers/{id}', function($id) {
+Route::patch('/api/teachers/{id}', function($id) {
     $body = request()->all();
     $updatedTeacher = Classroom::editTeacherById($id, $body);
 
@@ -103,7 +109,7 @@ Route::patch('/teachers/{id}', function($id) {
 });
 
 // Delete an existing teacher by ID
-Route::delete('/teachers/{id}', function($id) {
+Route::delete('/api/teachers/{id}', function($id) {
     $deleted = Classroom::deleteTeacherById($id);
 
     if ($deleted) {
